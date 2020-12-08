@@ -4,7 +4,6 @@ const { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } = require('constants');
 
 const input = stringsInLines();
 
-
 const graph = input.reduce((acc, rule) => {
   const data = rule.split(' contain ');
   const color = data[0].substr(0, data[0].indexOf(' bags'));
@@ -58,3 +57,34 @@ while (toCheck.size > 0) {
 
 console.log(`A: ${resultA.size}`);
 
+
+const rules = input.reduce((acc, rule) => {
+  const data = rule.split(' contain ');
+  const color = data[0].substr(0, data[0].indexOf(' bags'));
+  acc[color] = {};
+
+  const subs = data[1].split(',');
+  subs.forEach(sub => {
+    const item = sub.trim().split(' ');
+    const count = item.shift();
+    if (count === 'no') {
+      return;
+    }
+
+    item.pop();
+    const subColor = item.join(' ');
+    acc[color][subColor] = count;
+  });
+
+  return acc;
+}, {});
+
+const process = (bags, multi) => {
+  return Object.keys(bags).reduce((acc, bagName) => {
+    const sum = process(rules[bagName], multi * bags[bagName]) + multi * bags[bagName];
+    return acc + sum;
+  }, 0);
+}
+
+const resultB = process(rules['shiny gold'], 1);
+console.log(`B: ${resultB}`);
