@@ -10,30 +10,26 @@ const LIMIT = 30000000;
 let turn = 0;
 let state = {
   memory:{},
-  last: 0,
+  last: -1,
 };
 while (turn < LIMIT) {
   if (turn % 1000000 === 0) {
     console.log(`turn: ${turn}`);
   }
+
   let num;
   if (input.length) {
     num = input.shift();
   } else {
-    
-    if (state.memory[state.last].length === 1) {
+
+    if (!state.memory[state.last]) {
       num = 0;
     } else {
-      num = state.memory[state.last][1] - state.memory[state.last][0];
+      num = turn - state.memory[state.last];
     }
   }
-
-  state.memory[num] = state.memory[num] || [];
-  state.memory[num].push(turn + 1);
-  if (state.memory[num].length > 2) {
-    state.memory[num].shift();
-  }
-
+  // console.log(num);
+  state.memory[state.last] = turn;
   state.last = num;
   turn++;
 }
